@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap } from "gsap";
+import gsap from "gsap";
 import { performanceImages, performanceImgPositions } from "../constants/index.js";
 import {useMediaQuery} from "react-responsive";
 
@@ -15,15 +15,14 @@ const Performance = () => {
 
             // Text Animation
             gsap.fromTo(
-                ".content",
+                ".content p",
                 { opacity: 0, y: 10 },
                 {
                     opacity: 1,
                     y: 0,
-                    duration: 0.8,
-                    ease: "power2.out",
+                    ease: "power1.out",
                     scrollTrigger: {
-                        trigger: sectionRef.current,
+                        trigger: ".content p",
                         start: "top bottom",
                         end: "top center",
                         scrub: true,
@@ -40,29 +39,26 @@ const Performance = () => {
                 scrollTrigger: {
                     trigger: sectionEl,
                     start: "top bottom",
-                    end: "center center",
+                    end: "bottom top",
                     scrub: 1,
                     invalidateOnRefresh: true,
                 },
             });
 
+            // Position Each Performance Image
             performanceImgPositions.forEach((item) => {
                 if (item.id === "p5") return;
 
                 const selector = `.${item.id}`;
-                const toVars = {};
+                const vars = {};
 
-                if (typeof item.left === "number") {
-                    toVars.left = `${item.left}%`;
-                    toVars.right = "auto";
-                }
-                if (typeof item.right === "number") {
-                    toVars.right = `${item.right}%`;
-                    toVars.left = "auto";
-                }
-                if (typeof item.bottom === "number") toVars.bottom = `${item.bottom}%`;
+                if (typeof item.left === "number") vars.left = `${item.left}%`;
+                if (typeof item.right === "number") vars.right = `${item.right}%`;
+                if (typeof item.bottom === "number") vars.bottom = `${item.bottom}%`;
 
-                tl.to(selector, toVars, 0);
+                if (item.transform) vars.transform = item.transform;
+
+                tl.to(selector, vars, 0);
             });
         },
         { scope: sectionRef, dependencies: [isMobile] }
